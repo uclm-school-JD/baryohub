@@ -1,59 +1,60 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BaryoHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+BaryoHub is a barangay information and resident services capstone project at the University of Cebu – Lapu-Lapu and Mandaue. Its resident portal helps community members request barangay documents and track when they are ready for pickup.
 
-## About Laravel
+## Run BaryoHub locally on Windows
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The `setup/laravel-13-breeze` branch uses **Laravel 12** and Laravel Breeze. Its Composer configuration requires PHP `^8.2`. Install Git, Composer, Node.js with npm, and MySQL. Use `php -v` in the VS Code terminal to check which PHP installation PowerShell is using.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Clone the working branch and open the project folder.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+   ```powershell
+   cd C:\xampp\htdocs
+   git clone --branch setup/laravel-13-breeze https://github.com/uclm-school-JD/baryohub.git
+   cd baryohub
+   code .
+   ```
 
-## Learning Laravel
+2. On a fresh checkout, install dependencies and create your local configuration.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+   ```powershell
+   composer install
+   npm.cmd ci
+   Copy-Item .env.example .env
+   php artisan key:generate
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Start MySQL in XAMPP and create a database named `baryohub_laravel`. Set these values in `.env`, using the username and password for your local MySQL account.
 
-## Laravel Sponsors
+   ```dotenv
+   APP_NAME=BaryoHub
+   APP_URL=http://127.0.0.1:8000
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=baryohub_laravel
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. Create the tables, build the frontend, and start the application.
 
-### Premium Partners
+   ```powershell
+   php artisan migrate
+   npm.cmd run build
+   php artisan serve
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+5. Open the address printed by Artisan. Register a test account, sign in, and open the dashboard. Each teammate should keep their own local `.env` outside version control.
 
-## Contributing
+## Resident Services add-on
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The working branch provides the Breeze dashboard and profile routes. To enable document requests, tracking, and office roles, integrate the BaryoHub Resident Services add-on using its included `START-HERE.md`. The guide explains how to connect the routes, apply the migrations, and assign the first administrator to an existing account.
 
-## Code of Conduct
+| Role | Access after installing the add-on |
+| --- | --- |
+| Resident | Request a barangay clearance, certificate of residency, or certificate of indigency. Track personal requests and read published barangay updates. |
+| Barangay staff | Use resident services, open the office request queue, and update the status of a request. |
+| Admin | Process requests and use **Manage staff access** to grant or revoke staff privileges. |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+New accounts receive resident access. To check the workflow, submit a request as a resident and record its number. Sign in as staff, find the same number, and mark it **Ready for pickup**. Sign back in as the resident and confirm the status under **Track a request**. Only admins should be able to open **Manage staff access**.
