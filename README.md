@@ -2,7 +2,6 @@
 
 BaryoHub is a barangay information and resident services capstone project at the University of Cebu – Lapu-Lapu and Mandaue. Its resident portal helps community members request barangay documents and track when they are ready for pickup.
 
-**Course:** it-elec1
 
 [Browse the Laravel application source](https://github.com/uclm-school-JD/baryohub/tree/setup/laravel-13-breeze)
 
