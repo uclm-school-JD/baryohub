@@ -1,10 +1,10 @@
 # BaryoHub
 
-BaryoHub is a barangay information and resident services capstone project at the University of Cebu – Lapu-Lapu and Mandaue. Its resident portal helps community members request barangay documents and track when they are ready for pickup.
+BaryoHub is a barangay information and resident services capstone project at the University of Cebu – Lapu-Lapu and Mandaue. The portal lets residents request documents, check pickup status, and read barangay announcements.
 
 ## Run BaryoHub locally on Windows
 
-The `setup/laravel-13-breeze` branch uses **Laravel 12** and Laravel Breeze. Its Composer configuration requires PHP `^8.2`. Install Git, Composer, Node.js with npm, and MySQL. Use `php -v` in the VS Code terminal to check which PHP installation PowerShell is using.
+The application uses **Laravel 12** and Laravel Breeze. Install Git, Composer, PHP 8.2 or newer with the MySQL PDO driver, MySQL, and Node.js with npm. Vite requires Node.js 20.19+ on the 20.x line or 22.12+. Use `php -v` and `node -v` in PowerShell to check your versions.
 
 1. Clone the working branch and open the project folder.
 
@@ -45,16 +45,24 @@ The `setup/laravel-13-breeze` branch uses **Laravel 12** and Laravel Breeze. Its
    php artisan serve
    ```
 
-5. Open the address printed by Artisan. Register a test account, sign in, and open the dashboard. Each teammate should keep their own local `.env` outside version control.
+5. Open the address printed by Artisan and register a test account. Open the verification link in `storage/logs/laravel.log` in the same browser to reach the dashboard. The default `MAIL_MAILER=log` also writes password reset links to that file. To deliver email, set `MAIL_MAILER=smtp` and configure the `MAIL_*` connection settings and sender address for your SMTP server. Set `APP_URL` to the exact address you use to open the app. Keep each teammate's `.env` outside version control.
 
-## Resident Services add-on
+For development, `composer dev` starts Laravel, the queue worker, and Vite. Run `composer logs` in a separate terminal on platforms with PHP's PCNTL extension. `composer test` runs the test suite with SQLite in memory and stubbed frontend assets.
 
-The working branch provides the Breeze dashboard and profile routes. To enable document requests, tracking, and office roles, integrate the BaryoHub Resident Services add-on using its included `START-HERE.md`. The guide explains how to connect the routes, apply the migrations, and assign the first administrator to an existing account.
+## Resident services
 
-| Role | Access after installing the add-on |
+The tables for requests, account roles, and announcements are included in the application migrations. Run `php artisan migrate` after updating an existing checkout.
+
+| Role | Access |
 | --- | --- |
 | Resident | Request a barangay clearance, certificate of residency, or certificate of indigency. Track personal requests and read published barangay updates. |
 | Barangay staff | Use resident services, open the office request queue, and update the status of a request. |
-| Admin | Process requests and use **Manage staff access** to grant or revoke staff privileges. |
+| Admin | Process requests, grant or revoke staff access, and publish barangay updates. |
 
-New accounts receive resident access. To check the workflow, submit a request as a resident and record its number. Sign in as staff, find the same number, and mark it **Ready for pickup**. Sign back in as the resident and confirm the status under **Track a request**. Only admins should be able to open **Manage staff access**.
+New accounts receive resident access. Register and verify the first administrator's account, then grant admin access from the application's terminal. Replace the example with the account's email.
+
+```powershell
+php artisan baryohub:grant-admin admin@example.test
+```
+
+To check the workflow, submit a request as a resident and record its reference. Sign in as the administrator and use **Manage staff access** to grant another verified account staff access. As staff, find the reference in the **Office request queue** and mark it **Ready for pickup**. Sign back in as the resident and check **Track a request**. Administrators can publish announcements from **Publish barangay updates**.

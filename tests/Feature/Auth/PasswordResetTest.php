@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
@@ -17,6 +18,17 @@ class PasswordResetTest extends TestCase
         $response = $this->get('/forgot-password');
 
         $response->assertStatus(200);
+    }
+
+    public function test_log_mailer_explains_where_to_find_the_reset_link(): void
+    {
+        config(['mail.default' => 'log']);
+
+        $this->withSession(['status' => __(Password::RESET_LINK_SENT)])
+            ->get(route('password.request'))
+            ->assertOk()
+            ->assertSee('A password reset link was written to the application log.')
+            ->assertSee('Generate Password Reset Link');
     }
 
     public function test_reset_password_link_can_be_requested(): void
@@ -51,14 +63,14 @@ class PasswordResetTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create();
+        $user = User::factory()->create(['email' => 'resident@example.com']);
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/forgot-password', ['email' => 'Resident@example.com']);
 
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
             $response = $this->post('/reset-password', [
                 'token' => $notification->token,
-                'email' => $user->email,
+                'email' => 'Resident@example.com',
                 'password' => 'password',
                 'password_confirmation' => 'password',
             ]);

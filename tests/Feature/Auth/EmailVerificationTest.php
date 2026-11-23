@@ -22,6 +22,17 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_log_mailer_explains_where_to_find_the_verification_link(): void
+    {
+        config(['mail.default' => 'log']);
+
+        $this->actingAs(User::factory()->unverified()->create())
+            ->get(route('verification.notice'))
+            ->assertOk()
+            ->assertSee('Open the verification link in the application log')
+            ->assertSee('Change Email Address');
+    }
+
     public function test_email_can_be_verified(): void
     {
         $user = User::factory()->unverified()->create();

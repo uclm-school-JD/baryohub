@@ -1,10 +1,20 @@
 <x-guest-layout>
+    @php($usesMailLog = config('mail.default') === 'log')
+
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+        @if ($usesMailLog)
+            {{ __('Enter the email address on your account to generate a password reset link in the application log.') }}
+        @else
+            {{ __('Enter the email address on your account and we will email you a password reset link.') }}
+        @endif
     </div>
 
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    @if ($usesMailLog && session('status'))
+        <x-auth-session-status class="mb-4" :status="__('A password reset link was written to the application log.')" />
+    @else
+        <x-auth-session-status class="mb-4" :status="session('status')" />
+    @endif
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
@@ -18,7 +28,7 @@
 
         <div class="flex items-center justify-end mt-4">
             <x-primary-button>
-                {{ __('Email Password Reset Link') }}
+                {{ $usesMailLog ? __('Generate Password Reset Link') : __('Email Password Reset Link') }}
             </x-primary-button>
         </div>
     </form>
