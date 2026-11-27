@@ -10,7 +10,7 @@ The application uses **Laravel 12** and Laravel Breeze. Install Git, Composer, P
 
    ```powershell
    cd C:\xampp\htdocs
-   git clone --branch setup/laravel-13-breeze https://github.com/uclm-school-JD/baryohub.git
+   git clone --branch feature/capstone-completion https://github.com/uclm-school-JD/baryohub.git
    cd baryohub
    code .
    ```
@@ -66,3 +66,7 @@ php artisan baryohub:grant-admin admin@example.test
 ```
 
 To check the workflow, submit a request as a resident and record its reference. Sign in as the administrator and use **Manage staff access** to grant another verified account staff access. As staff, find the reference in the **Office request queue** and mark it **Ready for pickup**. Sign back in as the resident and check **Track a request**. Administrators can publish announcements from **Publish barangay updates**.
+
+## Capstone modules
+
+See [ADMIN_GUIDE.md](ADMIN_GUIDE.md), [USER_GUIDE.md](USER_GUIDE.md), [DEMO.md](DEMO.md), and [CAPSTONE_DEPLOYMENT.md](CAPSTONE_DEPLOYMENT.md). New registrations require administrator approval for document and incident submissions. Existing accounts retain approved status on migration. Run `php artisan migrate` before using new features. Test and deployment results must be verified before production.
