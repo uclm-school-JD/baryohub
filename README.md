@@ -1,72 +1,223 @@
 # BaryoHub
 
-BaryoHub is a barangay information and resident services capstone project at the University of Cebu – Lapu-Lapu and Mandaue. The portal lets residents request documents, check pickup status, and read barangay announcements.
+**Barangay Information and Resident Services Management System**
 
-## Run BaryoHub locally on Windows
+BaryoHub is a web-based capstone project at the University of Cebu – Lapu-Lapu and Mandaue (UCLM). It aims to simplify barangay transactions in Cebu City by connecting residents, barangay staff, and administrators through a centralized digital portal.
 
-The application uses **Laravel 12** and Laravel Breeze. Install Git, Composer, PHP 8.2 or newer with the MySQL PDO driver, MySQL, and Node.js with npm. Vite requires Node.js 20.19+ on the 20.x line or 22.12+. Use `php -v` and `node -v` in PowerShell to check your versions.
+> **Project status:** Under development / pre-release. The upgraded application is on the [`feature/capstone-completion`](https://github.com/uclm-school-JD/baryohub/tree/feature/capstone-completion) branch. Features listed below are implemented in source code; full runtime testing, manual QA, and successful live deployment have not yet been verified.
 
-1. Clone the working branch and open the project folder.
+## Objectives
 
-   ```powershell
-   cd C:\xampp\htdocs
-   git clone --branch feature/capstone-completion https://github.com/uclm-school-JD/baryohub.git
-   cd baryohub
-   code .
-   ```
+- Provide residents with convenient access to barangay services and document requests.
+- Improve request tracking, account approval, and communication.
+- Centralize resident records, barangay officials, and incident reports.
+- Support administrative decision-making through statistics and downloadable reports.
+- Restrict administrative functions to authorized accounts.
 
-2. On a fresh checkout, install dependencies and create your local configuration.
+## System features
 
-   ```powershell
-   composer install
-   npm.cmd ci
-   Copy-Item .env.example .env
-   php artisan key:generate
-   ```
+| Module | Features implemented in source code |
+| --- | --- |
+| Authentication | Registration, login, email verification, password reset, and basic profile management |
+| Resident services | Document requests, reference numbers, status tracking, basic personal data sheet, and notifications |
+| Document processing | Barangay clearance, certificate of residency, certificate of indigency; office request queue, filtering, and status updates |
+| Administration | Dashboard statistics, resident account approval, resident search, staff access management, and barangay announcements |
+| Resident records | Personal information, senior citizen counts based on birth date, and admin-managed indigent classification |
+| Officials | Add and update barangay officials; activate or deactivate records |
+| Incident reporting | Non-emergency reports, resident tracking, administrative review, and resolution |
+| Analytics | Monthly document-request statistics and CSV export |
+| Resident card | Printable prototype resident record card (not an official government-issued ID) |
 
-3. Start MySQL in XAMPP and create a database named `baryohub_laravel`. Set these values in `.env`, using the username and password for your local MySQL account.
+Document request statuses: **Pending → In progress / Approved / Rejected → Ready for pickup → Released**. These are available status options; strict transition enforcement is not yet established.
 
-   ```dotenv
-   APP_NAME=BaryoHub
-   APP_URL=http://127.0.0.1:8000
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=baryohub_laravel
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-
-4. Create the tables, build the frontend, and start the application.
-
-   ```powershell
-   php artisan migrate
-   npm.cmd run build
-   php artisan serve
-   ```
-
-5. Open the address printed by Artisan and register a test account. Open the verification link in `storage/logs/laravel.log` in the same browser to reach the dashboard. The default `MAIL_MAILER=log` also writes password reset links to that file. To deliver email, set `MAIL_MAILER=smtp` and configure the `MAIL_*` connection settings and sender address for your SMTP server. Set `APP_URL` to the exact address you use to open the app. Keep each teammate's `.env` outside version control.
-
-For development, `composer dev` starts Laravel, the queue worker, and Vite. Run `composer logs` in a separate terminal on platforms with PHP's PCNTL extension. `composer test` runs the test suite with SQLite in memory and stubbed frontend assets.
-
-## Resident services
-
-The tables for requests, account roles, and announcements are included in the application migrations. Run `php artisan migrate` after updating an existing checkout.
+## User roles
 
 | Role | Access |
 | --- | --- |
-| Resident | Request a barangay clearance, certificate of residency, or certificate of indigency. Track personal requests and read published barangay updates. |
-| Barangay staff | Use resident services, open the office request queue, and update the status of a request. |
-| Admin | Process requests, grant or revoke staff access, and publish barangay updates. |
+| Resident | Complete a basic personal data sheet, track personal requests, read announcements and notifications; approved residents can submit document requests and incident reports |
+| Barangay staff | Process document requests through the office queue |
+| Administrator | Manage staff privileges, resident approval and classifications, officials, incidents, reports, and announcements |
 
-New accounts receive resident access. Register and verify the first administrator's account, then grant admin access from the application's terminal. Replace the example with the account's email.
+New registrations receive the resident role and require administrative approval for document and incident submissions. Existing accounts retain approved status when the new migration is applied.
+
+## Technology stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | Laravel Blade, Tailwind CSS, JavaScript, Vite |
+| Backend | PHP 8.2+, Laravel 12 |
+| Authentication | Laravel Breeze, Laravel authorization gates |
+| Database | MySQL; SQLite in-memory for the configured test suite |
+| Development | VS Code, XAMPP, Composer, Node.js, npm |
+| Version control | Git and GitHub |
+| Testing | PHPUnit / Laravel feature tests |
+| Deployment | Railway (planned; live deployment not verified) |
+
+**Note:** The framework is Laravel 12, as specified in `composer.json`, despite the older setup branch containing “laravel-13” in its name.
+
+## System architecture
+
+```mermaid
+flowchart TD
+    R[Resident portal] --> F[Blade / Tailwind / JavaScript]
+    S[Staff portal] --> F
+    A[Admin portal] --> F
+    F --> L[Laravel routes, controllers and authorization]
+    L --> D[(MySQL database)]
+```
+
+## Getting started (Windows / XAMPP)
+
+### Prerequisites
+
+Install Git, Composer, PHP 8.2 or later with the required PHP extensions (including PDO MySQL), Node.js with npm (use a Vite-compatible supported version), and MySQL. Start MySQL in XAMPP. Check that the terminal uses the intended PHP and Node installations:
+
+```powershell
+php -v
+composer --version
+node -v
+npm.cmd -v
+git --version
+```
+
+### 1. Clone the upgraded application
+
+```powershell
+cd C:\xampp\htdocs
+git clone --branch feature/capstone-completion https://github.com/uclm-school-JD/baryohub.git
+cd baryohub
+code .
+```
+
+If the repository is already cloned, first commit or stash local work, then run:
+
+```powershell
+git fetch origin
+git switch feature/capstone-completion
+git pull origin feature/capstone-completion
+```
+
+### 2. Install dependencies and configure the environment
+
+```powershell
+composer install
+npm.cmd ci
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+```
+
+For a new installation with an empty `APP_KEY`, run `php artisan key:generate`. Do not regenerate an existing production key.
+
+### 3. Configure MySQL
+
+Create a database named `baryohub_laravel` in phpMyAdmin. Edit the local `.env` file:
+
+```dotenv
+APP_NAME=BaryoHub
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=baryohub_laravel
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=log
+```
+
+Use your own local database credentials. Never commit the `.env` file or production secrets. Back up an existing database before migrating.
+
+### 4. Migrate, build and run
+
+```powershell
+php artisan migrate
+php artisan optimize:clear
+npm.cmd run build
+php artisan serve
+```
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Register a test account and verify its email. With the local log mailer, verification and password-reset links are written to `storage/logs/laravel.log`; configure SMTP for actual email delivery.
+
+### 5. Create the first administrator
+
+Register and verify the account first. Replace the sample address with the email you registered:
 
 ```powershell
 php artisan baryohub:grant-admin admin@example.test
 ```
 
-To check the workflow, submit a request as a resident and record its reference. Sign in as the administrator and use **Manage staff access** to grant another verified account staff access. As staff, find the reference in the **Office request queue** and mark it **Ready for pickup**. Sign back in as the resident and check **Track a request**. Administrators can publish announcements from **Publish barangay updates**.
+Sign in and open **Admin management dashboard**. Approve a resident account before testing document and incident submissions.
 
-## Capstone modules
+## Testing and QA
 
-See [ADMIN_GUIDE.md](ADMIN_GUIDE.md), [USER_GUIDE.md](USER_GUIDE.md), [DEMO.md](DEMO.md), and [CAPSTONE_DEPLOYMENT.md](CAPSTONE_DEPLOYMENT.md). New registrations require administrator approval for document and incident submissions. Existing accounts retain approved status on migration. Run `php artisan migrate` before using new features. Test and deployment results must be verified before production.
+```powershell
+php artisan route:list
+php artisan test
+```
+
+The repository includes feature tests for registration, profile, document requests, barangay announcements, and additional capstone modules (approval, access control, incident handling, printable card and CSV download). Test files are present, but passing results have not been verified.
+
+Use fictional data to demonstrate the workflow:
+
+1. Register, verify and complete the resident personal data sheet.
+2. Sign in as administrator and approve the account.
+3. Submit a document request as resident, process it as staff, and check tracking and notifications.
+4. Submit a sample incident and resolve it as administrator.
+5. Review resident statistics and officials; export a CSV and open it in Excel or Google Sheets.
+6. Verify access control, input validation, mobile layout and all tests.
+
+## Capstone task status
+
+| Member / workstream | Status |
+| --- | --- |
+| Member 1 – Backend (Modules 6–7) | Core resident services and admin backend added; audit logs with date filtering and full staff account lifecycle remain incomplete |
+| Member 2 – Frontend (Modules 6–7) | Resident and admin screens added; full PDS and dedicated admin sidebar remain incomplete; responsive QA pending |
+| Member 3 – Testing | Feature tests added; full coverage and passing test execution pending |
+| Member 4 – QA and documentation | Guides added; manual QA, CSV compatibility checks and live deployment verification pending |
+
+The original IT-ELEC school-queue assignments were adapted to the BaryoHub barangay-service context. Queue-specific TV display requirements are not represented as completed features.
+
+## Documentation
+
+- [Administrator guide](ADMIN_GUIDE.md)
+- [Resident user guide](USER_GUIDE.md)
+- [Demonstration and QA checklist](DEMO.md)
+- [Deployment checklist](CAPSTONE_DEPLOYMENT.md)
+
+## Deployment and privacy
+
+Railway is the intended deployment platform. Follow the deployment checklist to configure the PHP runtime, database, HTTPS, application key, SMTP, public web root, asset build and migrations. No verified public live URL is currently documented.
+
+The system handles potentially sensitive resident information. Use fictional records for demonstrations. Before production use, establish authorized access, privacy and retention procedures, secure backups, and a security review. The incident module is not an emergency response service.
+
+## Contribution workflow
+
+Create a feature branch, make focused changes, run tests, and open a pull request for review. Do not commit credentials or real resident data.
+
+```powershell
+git switch feature/capstone-completion
+git pull origin feature/capstone-completion
+git switch -c feature/your-task
+# Make and test your changes
+git add .
+git commit -m "Describe your change"
+git push -u origin feature/your-task
+```
+
+## Project status and final deliverables
+
+- [x] GitHub repository and upgraded application branch
+- [x] Core resident and administrative source code enhancements
+- [x] Basic administrator, resident, demo and deployment guides
+- [x] Additional automated test files
+- [ ] Remaining feature gaps and full test coverage
+- [ ] Verified passing tests and manual quality assurance
+- [ ] Review and merge upgraded application into the default branch
+- [ ] Successful Railway deployment and verified live link
+- [ ] Final manuscript and presentation slides
+
+---
+
+**BaryoHub | BS Information Technology Capstone Project | UCLM**
