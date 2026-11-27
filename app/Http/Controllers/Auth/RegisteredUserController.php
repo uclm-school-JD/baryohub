@@ -42,6 +42,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        \Illuminate\Support\Facades\DB::table('users')->where('id', $user->id)->update(['approval_status' => 'pending']);
+
         event(new Registered($user));
 
         Auth::login($user);

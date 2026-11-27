@@ -44,10 +44,13 @@ class DocumentRequestController extends Controller
             'status' => ['required', Rule::enum(DocumentRequestStatus::class)],
         ]);
 
-        $documentRequest->newQuery()
+        \Illuminate\Support\Facades\DB::transaction(function () use ($documentRequest, $validated) {
+        $changed = $documentRequest->newQuery()
             ->whereKey($documentRequest->getKey())
             ->where('status', '!=', $validated['status'])
             ->update(['status' => $validated['status']]);
+        if ($changed) { \Illuminate\Support\Facades\DB::table('service_notifications')->insert(['user_id'=>$documentRequest->user_id,'message'=>'Document '.$documentRequest->reference.': '.$validated['status'],'created_at'=>now(),'updated_at'=>now()]); }
+        });
 
         return back()->with('status', "Request {$documentRequest->reference} was updated.");
     }

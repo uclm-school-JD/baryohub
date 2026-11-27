@@ -37,6 +37,7 @@
                 </div>
             </section>
 
+            <div class="flex flex-wrap gap-4"><a class="text-indigo-700 underline" href="{{ route('resident-services.index') }}">Personal data, incidents and notifications</a>@can('manage-staff-access')<a class="text-indigo-700 underline" href="{{ route('capstone.admin.index') }}">Admin management dashboard</a>@endcan</div>
             <section aria-labelledby="resident-services-heading" class="space-y-4">
                 <h2 id="resident-services-heading" class="text-xl font-bold text-slate-900">Resident services</h2>
 

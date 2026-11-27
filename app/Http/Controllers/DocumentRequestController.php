@@ -20,6 +20,7 @@ class DocumentRequestController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        abort_unless($request->user()->approval_status === 'approved', 403);
         $validated = $request->validate([
             'type' => ['required', Rule::enum(DocumentType::class)],
             'purpose' => ['required', 'string', 'max:1000'],
